@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/lib/database.types';
@@ -11,6 +12,32 @@ export interface ExtendedProduct extends DbProduct {
   inventory: number;
   unit: string;
   pricePerHalfKg: boolean;
+}
+
+// Define order item type for consistent usage
+export interface OrderItem {
+  productId: number;
+  quantity: number;
+  price: number;
+  name: string;
+}
+
+// Define order type for consistent usage
+export interface Order {
+  id: number;
+  customer_name: string;
+  phone: string;
+  address: string | null;
+  items: OrderItem[] | any; // Using any to accommodate Json type from database
+  status: string;
+  residential_complex_id: number | null;
+  complex_name?: string;
+  telegram_user_id?: string | null;
+  telegram_username?: string;
+  created_at: string;
+  updated_at: string;
+  delivery_date: string;
+  residential_complexes?: any;
 }
 
 export const useComplexes = () => {
@@ -181,8 +208,10 @@ export const useOrders = () => {
         
         return {
           ...order,
-          complex_name
-        };
+          complex_name,
+          // Ensure address is present, even if null
+          address: order.address || null
+        } as Order;
       });
     }
   });

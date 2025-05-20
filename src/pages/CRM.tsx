@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
-import { useOrders, useComplexes, useProducts } from "@/hooks/useSupabaseData";
+import { useOrders, useComplexes, useProducts, Order } from "@/hooks/useSupabaseData";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, AlertTriangle, Search, Truck } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -34,21 +33,9 @@ interface Product {
   unit?: string;
 }
 
-// Extend Order type to include complex_name
-interface ExtendedOrder {
-  id: number;
-  customer_name: string;
-  phone: string;
-  telegram_username: string;
-  telegram_user_id: string | null;
-  residential_complex_id: number | null;
-  items: any;
-  delivery_date: string;
-  address: string | null;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  complex_name?: string; // Add this property
+// Extend Order type for CRM specific needs
+interface ExtendedOrder extends Order {
+  // No need to add additional fields as they are now included in the base Order type
 }
 
 const CRM = () => {
@@ -237,23 +224,8 @@ const CRM = () => {
     
     // Process orders to include product price and complex name
     const processedOrders = orders?.map(order => {
-      const orderWithPrices = {...order} as ExtendedOrder;
-      
-      // Add complex name
-      const complex = complexesData.find(c => c.id === order.residential_complex_id);
-      orderWithPrices.complex_name = complex?.name || "Неизвестный ЖК";
-      
-      // Add prices
-      if (orderWithPrices.items && Array.isArray(orderWithPrices.items)) {
-        orderWithPrices.items = orderWithPrices.items.map((item: any) => {
-          const product = products.find(p => p.id === item.productId);
-          return {
-            ...item,
-            price: product?.price || 0
-          };
-        });
-      }
-      return orderWithPrices;
+      // Cast to ExtendedOrder as we know it's compatible now
+      return order as ExtendedOrder;
     }) || [];
     
     // Apply filters

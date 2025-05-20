@@ -5,24 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, X, PhoneCall, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-
-interface OrderItem {
-  productId: number;
-  quantity: number;
-  price: number;
-  name: string;
-}
-
-interface Order {
-  id: number;
-  customer_name: string;
-  phone: string;
-  address: string | null;
-  items: OrderItem[];
-  status: string;
-  residential_complex_id: number;
-  complex_name?: string;
-}
+import { Order } from "@/hooks/useSupabaseData";
 
 interface OrderCardProps {
   order: Order;
