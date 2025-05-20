@@ -1,0 +1,35 @@
+
+{
+  "name": "Berry Bot - Доставка фермерских продуктов",
+  "short_name": "Berry Bot",
+  "description": "Приложение для доставки фермерских продуктов прямо к вашему дому",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#4f46e5",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "categories": ["food", "shopping", "delivery"],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://t.me/berry_bot"
+    }
+  ]
+}
