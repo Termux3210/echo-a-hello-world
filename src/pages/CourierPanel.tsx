@@ -13,11 +13,8 @@ const CourierPanel = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("delivery");
 
-  // Add address property for each order if missing (should be handled by useOrders now)
-  const processedOrders = orders;
-
   // Filter orders based on status and search term
-  const filteredDeliveryOrders = processedOrders
+  const filteredDeliveryOrders = orders
     ?.filter((order) => order.status === "delivering")
     .filter((order) => 
       !searchTerm || 
@@ -26,7 +23,7 @@ const CourierPanel = () => {
       order.phone?.includes(searchTerm)
     ) || [];
 
-  const filteredArchivedOrders = processedOrders
+  const filteredArchivedOrders = orders
     ?.filter((order) => order.status === "completed" || order.status === "cancelled")
     .filter((order) => 
       !searchTerm || 
@@ -42,7 +39,7 @@ const CourierPanel = () => {
       
       if (result.success) {
         // Send thank you message
-        const order = processedOrders?.find(o => o.id === orderId);
+        const order = orders?.find(o => o.id === orderId);
         if (order && (order.telegram_user_id || order.telegram_username)) {
           await sendCustomStatusNotification(
             order.telegram_user_id || order.telegram_username,
@@ -68,7 +65,7 @@ const CourierPanel = () => {
       const result = await updateOrderStatus(orderId, "cancelled");
       
       if (result.success) {
-        const order = processedOrders?.find(o => o.id === orderId);
+        const order = orders?.find(o => o.id === orderId);
         if (order && (order.telegram_user_id || order.telegram_username)) {
           await sendCustomStatusNotification(
             order.telegram_user_id || order.telegram_username,

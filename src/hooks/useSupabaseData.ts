@@ -195,7 +195,7 @@ export const useOrders = () => {
       
       if (error) throw error;
       
-      // Process orders to include complex_name for easier access
+      // Process orders to include complex_name and address for easier access
       return (data || []).map(order => {
         let complex_name = null;
         
@@ -206,11 +206,13 @@ export const useOrders = () => {
           }
         }
         
+        // Add missing address property if it doesn't exist
+        const address = 'address' in order ? order.address : null;
+        
         return {
           ...order,
           complex_name,
-          // Ensure address is present, even if null
-          address: order.address || null
+          address
         } as Order;
       });
     }
