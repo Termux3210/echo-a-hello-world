@@ -259,7 +259,7 @@ export const useUserByTelegramUsername = (username: string | null) => {
   });
 };
 
-export const addAdmin = async (telegramUsername: string, name: string) => {
+export const addAdmin = async (telegramUsername: string, name: string): Promise<{success: boolean, error: any}> => {
   // Format username to always start with @
   const formattedUsername = telegramUsername.startsWith('@') 
     ? telegramUsername 
@@ -308,7 +308,7 @@ export const addAdmin = async (telegramUsername: string, name: string) => {
   }
 };
 
-export const removeAdmin = async (userId: number) => {
+export const removeAdmin = async (userId: number): Promise<{success: boolean, error: any}> => {
   try {
     const { error } = await supabase
       .from('users')
