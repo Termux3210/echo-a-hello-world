@@ -4,18 +4,46 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useOrders } from "@/hooks/useSupabaseData";
-import { supabase } from "@/integrations/supabase/client";
 import { OrderCard } from "@/components/CourierOrderCard";
 import { updateOrderStatus, sendCustomStatusNotification } from "@/lib/orderService";
 import { toast } from "sonner";
+
+interface OrderItem {
+  productId: number;
+  quantity: number;
+  price: number;
+  name: string;
+}
+
+interface Order {
+  id: number;
+  customer_name: string;
+  phone: string;
+  address: string | null;
+  items: OrderItem[];
+  status: string;
+  residential_complex_id: number;
+  complex_name?: string;
+  telegram_user_id?: string;
+  telegram_username?: string;
+  created_at: string;
+  updated_at: string;
+  delivery_date: string;
+}
 
 const CourierPanel = () => {
   const { data: orders, isLoading, refetch } = useOrders();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("delivery");
 
+  // Add address property for each order if missing
+  const processedOrders = orders?.map(order => ({
+    ...order,
+    address: order.address || null
+  })) as Order[] | undefined;
+
   // Filter orders based on status and search term
-  const filteredDeliveryOrders = orders
+  const filteredDeliveryOrders = processedOrders
     ?.filter((order) => order.status === "delivering")
     .filter((order) => 
       !searchTerm || 
@@ -24,7 +52,7 @@ const CourierPanel = () => {
       order.phone?.includes(searchTerm)
     ) || [];
 
-  const filteredArchivedOrders = orders
+  const filteredArchivedOrders = processedOrders
     ?.filter((order) => order.status === "completed" || order.status === "cancelled")
     .filter((order) => 
       !searchTerm || 
@@ -40,7 +68,7 @@ const CourierPanel = () => {
       
       if (result.success) {
         // Send thank you message
-        const order = orders?.find(o => o.id === orderId);
+        const order = processedOrders?.find(o => o.id === orderId);
         if (order && (order.telegram_user_id || order.telegram_username)) {
           await sendCustomStatusNotification(
             order.telegram_user_id || order.telegram_username,
@@ -66,7 +94,7 @@ const CourierPanel = () => {
       const result = await updateOrderStatus(orderId, "cancelled");
       
       if (result.success) {
-        const order = orders?.find(o => o.id === orderId);
+        const order = processedOrders?.find(o => o.id === orderId);
         if (order && (order.telegram_user_id || order.telegram_username)) {
           await sendCustomStatusNotification(
             order.telegram_user_id || order.telegram_username,

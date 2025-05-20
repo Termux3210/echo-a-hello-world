@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/lib/database.types';
@@ -164,11 +163,27 @@ export const useOrders = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select('*, residential_complexes(name)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      
+      // Process orders to include complex_name for easier access
+      return (data || []).map(order => {
+        let complex_name = null;
+        
+        // Extract complex name from residential_complexes relation
+        if (order.residential_complexes) {
+          if (typeof order.residential_complexes === 'object') {
+            complex_name = order.residential_complexes.name;
+          }
+        }
+        
+        return {
+          ...order,
+          complex_name
+        };
+      });
     }
   });
 };
