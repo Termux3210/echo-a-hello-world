@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
@@ -12,7 +11,10 @@ import {
   LogOut,
   Menu,
   X,
-  Globe
+  Globe,
+  Clipboard,
+  Package,
+  Truck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -44,7 +46,7 @@ const SidebarLink = ({ to, icon: Icon, label, active, onClick }: SidebarLinkProp
   </Link>
 );
 
-export function AdminSidebar() {
+export const AdminSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAdmin();
@@ -56,14 +58,14 @@ export function AdminSidebar() {
     setIsSidebarOpen(!isMobile);
   }, [isMobile]);
   
-  const routes = [
-    { path: "/admin", icon: Home, label: "Панель управления" },
-    { path: "/admin/complexes", icon: Database, label: "Жилые комплексы" },
-    { path: "/admin/products", icon: ShoppingBag, label: "Товары" },
-    { path: "/admin/delivery", icon: Calendar, label: "Даты доставки" },
-    { path: "/admin/admins", icon: Users, label: "Администраторы" },
-    { path: "/admin/settings", icon: Settings, label: "Настройки" },
-    { path: "/crm", icon: Database, label: "CRM" },
+  const menuItems = [
+    { name: "Дашборд", path: "/admin", icon: Home },
+    { name: "Заказы", path: "/admin/crm", icon: Clipboard },
+    { name: "Товары", path: "/admin/products", icon: Package },
+    { name: "Комплексы", path: "/admin/complexes", icon: Calendar },
+    { name: "Курьеры", path: "/courier", icon: Truck },
+    { name: "Администраторы", path: "/admin/admins", icon: Users },
+    { name: "Настройки", path: "/admin/settings", icon: Settings },
   ];
   
   const toggleSidebar = () => {
@@ -115,16 +117,16 @@ export function AdminSidebar() {
       
       <div className="flex-1 py-4 px-3">
         <nav className="space-y-1">
-          {routes.map((route) => (
+          {menuItems.map((item) => (
             <SidebarLink
-              key={route.path}
-              to={route.path}
-              icon={route.icon}
-              label={route.label}
+              key={item.path}
+              to={item.path}
+              icon={item.icon}
+              label={item.name}
               active={
-                route.path === "/admin" 
+                item.path === "/admin" 
                   ? location.pathname === "/admin"
-                  : location.pathname.startsWith(route.path)
+                  : location.pathname.startsWith(item.path)
               }
               onClick={handleLinkClick}
             />
@@ -156,6 +158,6 @@ export function AdminSidebar() {
       </div>
     </div>
   );
-}
+};
 
 export default AdminSidebar;

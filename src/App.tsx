@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AdminProvider } from "@/hooks/useAdmin";
 import { CartProvider } from "@/hooks/useCart";
 import { ComplexProvider } from "@/hooks/useComplex"; // Добавляем импорт 
@@ -12,6 +11,7 @@ import TelegramBotService from "./components/TelegramBotService";
 import { startDeliveryReminderSystem } from "./lib/deliveryReminders";
 import { ensureDatabaseTables } from "./lib/initializeDatabase";
 import PullToRefresh from "./components/PullToRefresh";
+import CourierPanel from "./pages/CourierPanel";
 
 // Lazy load pages to improve performance
 const Index = lazy(() => import("./pages/Index"));
@@ -80,7 +80,7 @@ function App() {
             <ComplexProvider> {/* Добавляем ComplexProvider */}
               <Toaster />
               <Sonner />
-              <BrowserRouter>
+              <Router>
                 <TelegramBotService>
                   <PullToRefresh />
                   <Suspense fallback={<Loading />}>
@@ -97,12 +97,13 @@ function App() {
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/product/:productId" element={<ProductDetail />} />
                       <Route path="/start_from_telegram/:userId" element={<Index />} />
+                      <Route path="/courier" element={<CourierPanel />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
                 </TelegramBotService>
-              </BrowserRouter>
+              </Router>
             </ComplexProvider>
           </CartProvider>
         </AdminProvider>
