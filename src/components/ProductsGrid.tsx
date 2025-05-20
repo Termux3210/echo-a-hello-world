@@ -5,16 +5,27 @@ import ProductCard from "@/components/ProductCard";
 import { useAvailableProducts, useNextDeliveryDate, ExtendedProduct } from "@/hooks/useSupabaseData";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
+import { useEffect } from "react";
 
 interface ProductsGridProps {
   selectedComplex: number | null;
 }
 
 export default function ProductsGrid({ selectedComplex }: ProductsGridProps) {
-  const { data: products, isLoading } = useAvailableProducts();
+  const { data: products, isLoading, error } = useAvailableProducts();
   const { data: nextDelivery } = useNextDeliveryDate();
   const { addToCart } = useCart();
   const navigate = useNavigate();
+
+  // Добавляем логирование для диагностики проблем загрузки
+  useEffect(() => {
+    if (error) {
+      console.error("Error loading products:", error);
+    }
+    if (products) {
+      console.log("Products loaded:", products.length);
+    }
+  }, [products, error]);
 
   const handleAddToCart = (product: ExtendedProduct) => {
     if (!selectedComplex) {
@@ -69,6 +80,11 @@ export default function ProductsGrid({ selectedComplex }: ProductsGridProps) {
       {isLoading ? (
         <div className="flex justify-center py-8">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : error ? (
+        <div className="p-8 text-center bg-white rounded-xl shadow-sm">
+          <p className="text-red-500">Ошибка при загрузке товаров</p>
+          <p className="text-gray-500 text-sm">{(error as Error).message}</p>
         </div>
       ) : products && products.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">

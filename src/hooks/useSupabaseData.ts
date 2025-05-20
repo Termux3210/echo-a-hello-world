@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/lib/database.types';
@@ -284,7 +285,7 @@ export const addAdmin = async (telegramUsername: string, name: string): Promise<
         .update({ 
           is_admin: true,
           name: name || existingUser.name
-        })
+        } as Database['public']['Tables']['users']['Update'])
         .eq('telegram_username', formattedUsername);
 
       if (updateError) throw updateError;
@@ -296,7 +297,7 @@ export const addAdmin = async (telegramUsername: string, name: string): Promise<
           telegram_username: formattedUsername,
           name: name,
           is_admin: true
-        });
+        } as Database['public']['Tables']['users']['Insert']);
 
       if (insertError) throw insertError;
     }
@@ -312,7 +313,7 @@ export const removeAdmin = async (userId: number): Promise<{success: boolean, er
   try {
     const { error } = await supabase
       .from('users')
-      .update({ is_admin: false })
+      .update({ is_admin: false } as Database['public']['Tables']['users']['Update'])
       .eq('id', userId);
 
     if (error) throw error;
